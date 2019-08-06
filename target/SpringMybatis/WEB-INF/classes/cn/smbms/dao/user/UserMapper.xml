@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.smbms.dao.user.UserMapper">
+
+
+
+	<!--登录-->
+	<select id="login" resultType="User" parameterType="User">
+		 select * from smbms_user where userCode=#{userCode}
+	</select>
+
+
+	<select id="getUserList" resultType="User" parameterType="User">
+	select u.*,r.roleName as userRoleName from smbms_user u,smbms_role r where u.userRole = r.id
+	<if test="userName!=null and userName!='' ">
+		and  userName like concat('%',#{userName},'%')
+	</if>
+	<if test="userRole>0">
+		and u.userRole =#{userRole}
+	</if>
+		order by creationDate DESC limit #{currentPageNo},#{pageSize}
+	</select>
+
+	<!--指定id查询-->
+	<select id="getUserById" resultType="User" parameterType="User">
+		select u.*,r.roleName as userRoleName from smbms_user u,smbms_role r where u.id=#{u.id} and u.userRole = r.id
+	</select>
+
+
+
+	<select id="getUserCount" resultType="Integer" parameterType="User">
+		select count(1) as count from smbms_user
+		<trim prefix="where" prefixOverrides="and | or">
+			<if test="userName!=null and userName!=''">
+				and  userName like concat('%',#{userName},'%')
+			</if>
+			<if test="userRole!=null and userRole!=''">
+				and userRole =#{userRole}
+			</if>
+		</trim>
+
+	</select>
+</mapper>
